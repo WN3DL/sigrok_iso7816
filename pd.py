@@ -534,8 +534,8 @@ class Decoder(srd.Decoder):
         
         if (pps0 == r_pps0 and pps1 == r_pps1 and pps2 == r_pps2 and pps3 == r_pps3):
             if (self.detect_clock or self.sample_as_clock):
-                tmp_fi = self.clock_rate[int(pps1 >> 4)]
-                tmp_di = self.baud_rate[int(pps1 & 0x0F)]
+                tmp_fi = self.clock_rate.get(int(pps1 >> 4), 372)
+                tmp_di = self.baud_rate.get(int(pps1 & 0x0F), 1)
                 tmp_clock_skip = int(tmp_fi / tmp_di)                
                 self.log("Received PPS change: FI", tmp_fi, "DI", tmp_di, "clock_skip", tmp_clock_skip)
                 self.clock_skip = int(tmp_clock_skip * self.detected_clock_skip / 372)
@@ -543,8 +543,8 @@ class Decoder(srd.Decoder):
                 self.di = tmp_di
                 self.log("PPS Success new settings (calculated): FI", self.fi, "DI", self.di, "clock_skip", self.clock_skip)
             else:
-                self.fi = self.clock_rate[int(pps1 >> 4)]
-                self.di = self.baud_rate[int(pps1 & 0x0F)]
+                self.fi = self.clock_rate.get(int(pps1 >> 4), 372)
+                self.di = self.baud_rate.get(int(pps1 & 0x0F), 1)
                 self.clock_skip = int(self.fi / self.di)
                 self.log("PPS Success new settings: FI", self.fi, "DI", self.di, "clock_skip", self.clock_skip)
         else:
